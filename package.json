@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A repo to understand better, how to work with ai agents and tools",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",

@@ -1,27 +1,13 @@
-import { createOpenAPIChain, ConversationChain } from "langchain/chains";
-import { ChatOpenAI } from "@langchain/openai";
+import {ConversationChain } from "langchain/chains";
 import {config} from "dotenv"
 config()
-// Initialize the chat model
-const chatModel = new ChatOpenAI({
-  model: "gpt-4o",
-  temperature: 0,
-});
 
-const chain = new ConversationChain({
-    llm:chatModel,
-    outputKey:"output",
-});
 
-const enterChain = async (userQuery:string,calback:(result:string) => void) => {
-    // Create an OpenAPI chain
-    // Run the chain with a specific query
-    const result = await chain.invoke({
-        input:userQuery
-    })
-    calback(result.output)
-}
+import { agentExecutor } from "./agentChain.js";
+const input = "how long is the word sentence: Unser ach so freier Geist tanzt auf der Nase unseres Seins"
 
-enterChain("write a letter to my wife",(result) => {
-    console.log(`${result}`)
+const result = await agentExecutor.invoke({
+    input:input,
+
 })
+console.log(result)
