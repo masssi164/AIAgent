@@ -1,29 +1,43 @@
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
-import { chatModel } from "./ChatModel.js";
-import { DynamicTool } from '@langchain/core/tools';
+import { ChatOpenAI } from '@langchain/openai';
+import { BufferMemory } from 'langchain/memory';
+import { OpenApiToolkit } from 'langchain/agents';
+import { JsonSpec } from 'langchain/tools';
+import { chatModel } from './ChatModel.js';
+import { getJsonSpec } from './YamlLoader.js';
+const fileName:string = "/data/openapiSpec.yaml"
+// Load OpenAPI spec from file
+let openApiSpec:any;
+await getJsonSpec(fileName,(err,yaml) => {
+  if(yaml) {
+    openApiSpec = yaml
+  }
+})
 
-// Definieren eines einfachen Werkzeugs
-const customTool = new DynamicTool({
-  name: "get_word_length",
-  description: "Returns the length of a word.",
-  func: async (input: string) => input.length.toString(),
+
+// Initialize OpenApiToolkit
+const toolkit = new OpenApiToolkit(new JsonSpec(openApiSpec),chatModel,{
+  "content-type":"application/json"
 });
 
-const tools = [customTool];
+// Create tools array including custom and OpenAPI tools
+const tools = [ ...toolkit.getTools()];
+const toolNames = tools.map(tool => tool.name).join(" ");
 
-// Erstellen der Eingabeaufforderungsvorlage
+// Create the prompt template
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant. Make sure, to use your given tools if its possible "],
+  ["system", "You are a helpful assistant. Make sure to use your given tools " + toolNames + " as much as possible. Report each step as you use a tool."],
   ["human", "{input}"],
   new MessagesPlaceholder("agent_scratchpad"),
 ]);
 
-// Erstellen des Agenten
-const agent = await createToolCallingAgent({ llm: chatModel, tools, prompt })
+// Create the agent
+const agent = await createToolCallingAgent({ llm: chatModel, tools, prompt });
 
-// Initialisieren des Agenten-Executors
+// Initialize the agent executor
 export const agentExecutor = new AgentExecutor({
   agent,
   tools,
+  handleParsingErrors: true,
 });

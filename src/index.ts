@@ -4,10 +4,11 @@ config()
 
 
 import { agentExecutor } from "./agentChain.js";
-const input = "how long is the word sentence: Unser ach so freier Geist tanzt auf der Nase unseres Seins"
+const input = "how many tutorials are listed?"
 
+const agent_scratchpad:string =""
 const result = await agentExecutor.invoke({
     input:input,
-
+    agent_scratchpad:agent_scratchpad
 })
-console.log(result)
+console.log(result.output,agent_scratchpad)
