@@ -1,18 +1,15 @@
-import jsYaml from "js-yaml";
-import {readFile} from "fs"
+import jsYaml from "js-yaml"; "js-yaml";
+import {readFile} from "fs/promises"
+import { JsonObject } from "langchain/tools";
 
-export const getJsonSpec= async (fileName:string,callback:(err?:Error,yaml?:unknown | null) => void ) => {
+export const getJsonSpec= async (fileName:string):Promise<JsonObject>  => {
     try {
-        readFile(fileName,"utf-8",async (err,data) => {
-            if(err) {
-                throw err
-            }
-            if(data && data.length > 0) {
-                callback(undefined,jsYaml.load(data))
-            }
-        })
+        const fileContent = await readFile(fileName,"utf-8")
+        const jsonYaml = jsYaml.load(fileContent) as JsonObject
+        if(!jsonYaml) throw new Error("yaml not converted to JsonObject")
+        return jsonYaml
     } catch(err) {
         console.error(err)
-        callback(err as Error)
+        throw err as Error
     }
 }

@@ -1,0 +1,181 @@
+openapi: 3.0.1
+info:
+  title: Tutorial API
+  description: API for managing tutorials
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+
+paths:
+  /tutorials:
+    post:
+      summary: Create a new tutorial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Hackathon Tutorial
+                description:
+                  type: string
+                  example: Tutorial to show how a Hackathon works
+      responses:
+        '201':
+          description: Tutorial created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  published:
+                    type: boolean
+                    example: false
+
+    get:
+      summary: Get all tutorials
+      responses:
+        '200':
+          description: List of tutorials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    published:
+                      type: boolean
+
+    delete:
+      summary: Delete all tutorials
+      responses:
+        '200':
+          description: All tutorials deleted
+
+  /tutorials/{id}:
+    get:
+      summary: Get a tutorial by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 3
+      responses:
+        '200':
+          description: Tutorial details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  published:
+                    type: boolean
+
+    put:
+      summary: Update a tutorial by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Hackathon Tutorial
+                description:
+                  type: string
+                  example: Tutorial to show how a Hackathon really works
+                published:
+                  type: boolean
+                  example: false
+      responses:
+        '200':
+          description: Tutorial updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  published:
+                    type: boolean
+
+    delete:
+      summary: Delete a tutorial by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 4
+      responses:
+        '200':
+          description: Tutorial deleted
+
+  /tutorials/search:
+    get:
+      summary: Search tutorials by title
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+          example: Hack
+      responses:
+        '200':
+          description: List of tutorials matching the title
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    published:
+                      type: boolean
