@@ -2,21 +2,14 @@ import {config} from "dotenv"
 config()
 
 
-import {openapiAgent } from "./agentChain.js";
-const input = "how many tutorials are listed?"
+import {invoke, openapiAgent} from "./agentChain.js";
+const input = `Create a new tutorial with example values about a interesting topic
+BaseUrl: http://0.0.0.0:8080/api in dem fall +/tutorials und benötigt für post werden title und description beides strings sofort PostRequest
+`
 
 const agent_scratchpad:string =""
-const result = await openapiAgent.invoke({
-    input:input,
-    agent_scratchpad:agent_scratchpad
-})
-console.log(`Got output ${result.output}`);
-
-console.log(
-  `Got intermediate steps ${JSON.stringify(
-    result.intermediateSteps,
-    null,
-    2
-  )}`
-);
-console.log(result.output,agent_scratchpad)
+const result = await invoke(input,agent_scratchpad)
+if(result) {
+  console.log("intermediatesteps",result.intermediateSteps)
+  console.log(`output: ${result.output}`)
+}

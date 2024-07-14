@@ -4,7 +4,7 @@ info:
   description: API for managing tutorials
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api
+  - url: http://0.0.0.0:8080/api
     description: Local server
 
 paths:
@@ -12,7 +12,6 @@ paths:
     post:
       summary: Create a new tutorial
       requestBody:
-        required: true
         content:
           application/json:
             schema:
